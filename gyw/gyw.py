@@ -172,7 +172,7 @@ class GeneralizedYoungWall:
         # string. We use a lambda function to get the whitespace length correct.
         reducedsig = strsig
         while re.search(r"\+\s*-",reducedsig):
-            reducedsig = re.sub(r"\+\s*-", lambda match : str().ljust(len(match.group(int(0))) , reducedsig))
+            reducedsig = re.sub(r"\+\s*-", lambda match : str().ljust(len(match.group(int(0)))) , reducedsig)
         return (sig,reducedsig)
     
     def signature(self, i):
