@@ -25,9 +25,11 @@
 
 
 import re
+from copy import deepcopy
 from sage.misc.latex import latex
 from sage.graphs.graph import DiGraph
 from sage.combinat import ranker
+from sage.combinat.root_system.cartan_type import CartanType
 
 class GeneralizedYoungWall:
     '''
@@ -324,8 +326,7 @@ class GeneralizedYoungWallCrystal:
         return self.data
      
     def report(self):
-        print [ x.pp() for x in self.data]    
-            print "\n-----\n"
+        print "\n-----\n"
         print ' There are a total of ' + str(len(self.data)) 
         print ' elements in the crystal, going down to depth ' + str(self.depth) +'.'
         
@@ -405,9 +406,6 @@ class GeneralizedYoungWallCrystal:
         
         footer = r"""\end{bla}
             \end{document}"""
-        f = open(filename, 'w')
+        f = open(filename, 'w+')
         f.write(header + self.latex() + footer)
         f.close()
-        
-
-
