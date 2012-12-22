@@ -30,6 +30,48 @@ from sage.graphs.graph import DiGraph
 from sage.combinat import ranker
 
 class GeneralizedYoungWall:
+    '''
+    construct a generalized young from its list representation
+    
+    INPUT:
+    
+    - ``data`` -- multi-list, containing the boxes of the generalized young wall read right to left bottom to top, empty list are required for each empty row.
+    - ``n`` -- integer, this is the largest expected value in any box of the generalized young wall.
+    
+    EXAMPLES::
+    
+        sage: X = [[0,2,1,0,2],[1,0,2],[],[],[1],[],[],[1]]
+        sage: XX = GeneralizeYoungWall(X,2)
+        sage: XX.pp()
+                1|
+                 |
+                 |        
+                1|
+                 |
+                 |
+            2|0|1|
+        2|0|1|2|0|
+        
+        sage: Y = [[0,5,4,3,2],[],[2,1,0,5,4,3],[3,2],[],[5,4,3,2]]
+        sage: YY = GeneralizeYoungWall(Y,5)
+        sage| YY.pp()
+            2|3|4|5|
+                   |
+                2|3| 
+        3|4|5|0|1|2|
+                   |
+          2|3|4|5|0|
+        
+        sage: Z =  [[0,2,1],[1,0,2],[2],[],[],[2]]
+        sage: ZZ = GeneralizeYoungWall(Z,2)
+        sage: ZZ.pp()
+             2|
+              |
+              |
+             2|
+         2|0|1|
+         1|2|0|
+    '''
 
     def __init__(self,data,n):
         self.rows = len(data)
@@ -68,7 +110,7 @@ class GeneralizedYoungWall:
                     
     def raw_signature(self,i):
         '''
-        This function returns the sequence from {+,-} obtain from all i-admissible
+        return the sequence from {+,-} obtain from all i-admissible
         slots and removable i-boxes without canceling any (+,-)-pairs.
         '''
         sig = []
@@ -86,7 +128,7 @@ class GeneralizedYoungWall:
         
     def sig_sort(self,a):
         '''
-        we use sig_sort to sort the +/- signature with the elements in the 
+        we use sig_sort to sort the +/- signature by the elements in the 
         farthest column and lowest row.  The location of the +/- is stored
         as the standard (row,col).  Because we need farthest col first, we 
         switch the order and negate that value of the col, this forces large
@@ -118,7 +160,7 @@ class GeneralizedYoungWall:
                 sig.append(['-',row,len(self.data[row])])
         sig = sorted(sig,key=self.sig_sort)
         
-        # sig is a multilist containing the +/- string and the location in the gyw for each +/-
+        # sig is a multilist containing the +/- string and the location for each +/-
         # strsig is simply the string of the +/- in sig
         strsig = ''.join( x[0] for x in sig)
             
@@ -151,11 +193,6 @@ class GeneralizedYoungWall:
             print(wall.rjust(2*self.cols+1))
         if self.data==[]:
             print '0'
-
-    def test(self):
-        self.pp()
-        for i in range(self.rank+1):
-            print str(i) + '-signature (raw,reduced) : ' + str(self.signature(i))
             
     def content(self):
         '''
@@ -253,6 +290,20 @@ class GeneralizedYoungWall:
 
 
 class GeneralizedYoungWallCrystal:
+    '''
+    construct the crystal of generalized young walls in type affine A_n
+    
+    INPUT:
+    - ``n`` -- integer, the rank of the affine Lie algebra, this determines the largest value of a box in the generalized young wall
+    - ``h`` -- integer, only the generalized young walls with at most h boxes are generated
+    
+    EXAMPLES::
+    
+        sage: Y = GeneralizeYoungWallCrysal(2,2)
+        sage: Y.cardinality()
+        13
+        
+    '''
     
     def __init__(self, n, h):
         self.rank = n
@@ -347,51 +398,5 @@ class GeneralizedYoungWallCrystal:
         f.write(header + self.latex() + footer)
         f.close()
         
-     
-#######################################################################
-#######################################################################
-#######################################################################
-
-##Z =  [[0,2,1],[1,0,2],[2],[],[],[2]]
-##W = [[0,2,1,0,2],[1,0,2],[],[],[1],[],[],[1]]
-#Y = [[0,5,4,3,2],[],[2,1,0,5,4,3],[3,2],[],[5,4,3,2]]
-
-
-
-GeneralizedYoungWallCrystal(2,3).report()
-
-
-print "--------------------"
-print "--------------------"
-for i in range(4):
-    print ' There are a total of ' + str(GeneralizedYoungWallCrystal(2,i).cardinality())
-    print ' elements in the crystal, going down to depth ' + str(i) +'.\n\n'
-
-#Z = GeneralizedYoungWall([],2)
-
-#data = []
-
-#level=0
-#wall = [Z]
-
-#for level in range(2):
-#    print "level = " + str(level) + "----------------------------------------"
-#    for Y in [X for X in wall if X.content()==level]:
-#        Y.pp()
-#        print " this gyw will generate the following "
-#        print "------------------------------------- "
-#        print "------------------------------------- "
-#        for i in range(3):
-#            W = Y.f(i)
-#            if W in wall:
-#                continue
-#            else:
-#                wall.append(W)
-#                W.pp()
-#                print str(W.content()) + "----\n"
-    
-
-#print len(wall)
-
 
 
