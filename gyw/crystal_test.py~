@@ -1,5 +1,0 @@
-from gyw import GeneralizedYoungWall
-from gyw import GeneralizedYoungWallCrystal
-
-
-GeneralizedYoungWallCrystal(2,2).latex_file('/home/roesler/test.tex')
