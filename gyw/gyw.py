@@ -33,7 +33,7 @@ from sage.combinat.root_system.cartan_type import CartanType
 
 class GeneralizedYoungWall:
     '''
-    construct a generalized young from its list representation
+    construct a generalized young wall from its list representation
     
     INPUT:
     
@@ -109,6 +109,7 @@ class GeneralizedYoungWall:
      
     def __hash__(self):
         return id(self)
+        
                     
     def raw_signature(self,i):
         '''
@@ -171,7 +172,7 @@ class GeneralizedYoungWall:
         # string. We use a lambda function to get the whitespace length correct.
         reducedsig = strsig
         while re.search(r"\+\s*-",reducedsig):
-            reducedsig = re.sub(r"\+\s*-", lambda match : str().ljust(len(match.group(int(0)))) , reducedsig)
+            reducedsig = re.sub(r"\+\s*-", lambda match : str().ljust(len(match.group(int(0))) , reducedsig)
 
         return (sig,reducedsig)
     
@@ -344,8 +345,10 @@ class GeneralizedYoungWallCrystal:
         """
         Returns a Dot2TeX version of self.
         """
-        rank = ranker.from_list(self.list())[int(0)]
-        vertex_key = lambda x: "N_"+str(rank(x))
+        #rank = ranker.from_list(self.list())[int(0)]
+        #rank = lambda x : self.data.index(x)
+        #vertex_key = lambda x: "N_"+str(rank(x))
+        vertex_key = lambda x : "N_"+str(self.data.index(x))
         
         # To do: check the regular expression
         # Removing %-style comments, newlines, quotes
@@ -357,7 +360,7 @@ class GeneralizedYoungWallCrystal:
         for x in self.data:
             result += "  " + vertex_key(x) + " [ label = \" \", texlbl = \"$"+quoted_latex(x)+"$\" ];\n"
         for x in self.data:
-            for i in range(1, self.rank+1):
+            for i in range(self.rank+1):
                 child = x.f(i)
                 if child in self.data:
                     try:
@@ -368,9 +371,10 @@ class GeneralizedYoungWallCrystal:
                         return False
                     try:
                         result += vertex_key(child)
-                    except KeyError:
+                    except KeyError as error:
                         print child.pp()
                         print "child caused an error with the ranker function, stopping exectution"    
+                        print error
                         return False
                     
                     result += " [ label = \" \", texlbl = \"%d\" ];\n"%i
@@ -396,7 +400,7 @@ class GeneralizedYoungWallCrystal:
             \usepackage[utf8]{inputenc}
             \usepackage{tikz}
             \usetikzlibrary{snakes,arrows,shapes,matrix}
-            \usepackage{amsmath}
+            \usepackage{amsmath,amssymb}
             \usepackage[active,tightpage]{preview}
             \newenvironment{bla}{}{}
             \PreviewEnvironment{bla}
