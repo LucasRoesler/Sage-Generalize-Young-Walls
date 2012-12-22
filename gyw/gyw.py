@@ -324,8 +324,7 @@ class GeneralizedYoungWallCrystal:
         return self.data
      
     def report(self):
-        for x in self.data:
-            x.pp()
+        print [ x.pp() for x in self.data]    
             print "\n-----\n"
         print ' There are a total of ' + str(len(self.data)) 
         print ' elements in the crystal, going down to depth ' + str(self.depth) +'.'
@@ -360,7 +359,19 @@ class GeneralizedYoungWallCrystal:
             for i in range(1, self.rank+1):
                 child = x.f(i)
                 if child in self.data:
-                    result += "  " + vertex_key(x) + " -> " + vertex_key(child)
+                    try:
+                        result += "  " + vertex_key(x) + " -> "
+                    except KeyError:
+                        print x.pp()
+                        print "x caused an error with the ranker function, stopping exectution"
+                        return False
+                    try:
+                        result += vertex_key(child)
+                    except KeyError:
+                        print child.pp()
+                        print "child caused an error with the ranker function, stopping exectution"    
+                        return False
+                    
                     result += " [ label = \" \", texlbl = \"%d\" ];\n"%i
         result+="}"
         return result
