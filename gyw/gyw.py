@@ -2,7 +2,7 @@
 #  Copyright (C) 2013
 #
 #  Lucas David-Roesler (roesler at lvc dot edu)
-#  Ben Salisbury (bsalisbury at sci dot ccny dot cuny dot edu)
+#  Ben Salisbury (bsalisbury at ccny dot cuny dot edu)
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
