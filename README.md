@@ -1,4 +1,4 @@
-sage_scripts
+Sage Scripts
 ============
 
 A repository for my code related to sage math.
