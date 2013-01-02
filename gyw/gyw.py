@@ -270,6 +270,9 @@ class GeneralizedYoungWall:
         return self.weight_lattice_realization().fundamental_weights()
 
     def simple_roots(self):
+        '''
+        Returns the simple roots in the basis of fundamental weights.
+        '''
         return self.weight_lattice_realization().simple_roots()
 
     def root_lattice_realization(self):
@@ -279,17 +282,13 @@ class GeneralizedYoungWall:
         return self.root_lattice_realization().simple_roots()
 
     def weight(self):
+        '''
+        Returns the weight of self.  Here, it is an element of the root lattice.
+        '''
         W = []
         for r in self.data:
             for i in r:
                 W.append(-1*self.alpha()[i])
-        return sum(w for w in W)
-
-    def weight_on_hi(self,i):
-        W = []
-        for r in self.data:
-            for j in r:
-                W.append(-1*self.cartan_type().cartan_matrix()[i][j])
         return sum(w for w in W)
 
     def epsilon(self, i):
@@ -306,9 +305,13 @@ class GeneralizedYoungWall:
         return eps
 
     def phi(self,i):
-        return self.epsilon(i) + self.weight_on_hi(i)
+        h = self.weight_lattice_realization().simple_coroots()
+        return self.epsilon(i) + y.weight().scalar(h[i])
 
     def column(self, k):
+        '''
+        Returns the list of boxes from the kth column of self.
+        '''
         C = []
         for row in self.data:
             if k-1 < len(row):
@@ -318,6 +321,9 @@ class GeneralizedYoungWall:
         return C
 
     def a(self,i,k):
+        '''
+        Returns the number a_i(k) of i-colored boxes in the kth column of self.
+        '''
         A = []
         for c in range(len(self.column(k))):
             if self.column(k)[c] == i:
