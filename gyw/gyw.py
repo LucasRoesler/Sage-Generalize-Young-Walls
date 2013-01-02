@@ -314,7 +314,7 @@ class GeneralizedYoungWall:
     def column(self, k):
         L = [len(r) for r in self.data]
         if k > max(L):
-            return 'The' +k+ 'th column is empty.'
+            continue
         else:
             return [self.data[j][k] for j in self.data[r]]
 
