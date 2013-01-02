@@ -276,38 +276,34 @@ class GeneralizedYoungWall:
         return self.root_lattice_realization().simple_roots()
 
     def weight(self):
-        return sum(self.iweight(i) for i in self.index_set())
-
-    def iweight(self,i):
         W = []
         for r in self.data:
-            if i in r:
+            for i in r:
                 W.append(-1*self.alpha()[i])
         return sum(w for w in W)
 
     def weight_on_hi(self,i):
         W = []
         for r in self.data:
-            if i in r:
-                W.append(-1*self.alpha()[i])
-        return sum(1 for w in W)
+            for j in r:
+                W.append(-1*self.cartan_type().cartan_matrix()[i][j])
+        return sum(w for w in W)
 
     def epsilon(self, i):
         '''
         Returns the number of i-colored arrows in the i-string above self in the crystal graph.
         '''
-        #Copied from existing Sage code.  Not functioning properly here.
         assert i in self.index_set()
         eps = 0
         while True:
             self = self.e(i)
-            if self == 0:
+            if self is None:
                 break
             eps = eps+1
         return eps
 
     def phi(self,i):
-        return self.epsilon(i) + self.weight_on_hi(self,i)
+        return self.epsilon(i) + self.weight_on_hi(i)
 
     def column(self, k):
         L = [len(r) for r in self.data]
@@ -328,11 +324,17 @@ class GeneralizedYoungWall:
         return len(A)
 
     def in_highest_weight_crystal(self,La):
-        assert La in self.weight_lattice_realization
-    for k in range(len(self.cols)):
-        for j in self.index_set():
-            if self.a(j,k) - self.a(j-1,k) > 0:
-                
+        assert La in self.weight_lattice_realization()
+        ac = self.weight_lattice_realization().simple_coroots()
+        for k in range(self.cols):
+            for j in self.index_set():
+                if self.a(j,k) - self.a(j-1,k) <= 0:
+                    return True
+                else:
+                    for p in self.index_set():
+                        if j-k == p+1 % n+1 and self.a(j,k) - self.a(j-1,k) <= La.scalar(ac[p]):
+                            return True
+
 
 
 class CrystalOfGeneralizedYoungWalls:
