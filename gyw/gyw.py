@@ -327,14 +327,27 @@ class GeneralizedYoungWall:
     def in_highest_weight_crystal(self,La):
         assert La in self.weight_lattice_realization()
         ac = self.weight_lattice_realization().simple_coroots()
-        for k in range(1,self.cols):
+        n = self.rank
+        
+        print "----- testing {0!s}".format(La)
+        
+        for k in range(1,self.cols+1):
             for j in self.index_set():
-                if self.a(j,k) - self.a(j-1,k) <= 0:
-                    return True
+                if self.a(j,k) - self.a( (j-1) % n ,k) <= 0:
+                    print "failed T1 on ({0!s},{1!s}) & ({2!s},{1!s}) move along".format(j,k,(j-1) % n)
+                    continue
                 else:
+                    p_not_found = True
                     for p in self.index_set():
-                        if j-k == p+1 % n+1 and self.a(j,k) - self.a(j-1,k) <= La.scalar(ac[p]):
-                            return True
+                        if j+k == (p+1) % (n+1) and self.a(j,k) - self.a(j-1,k) <= La.scalar(ac[p]):
+                            print "passed the test on (j,k,p)=({0!s},{1!s},{2!s})".format(j,k,p)
+                            p_not_found = False
+                            continue
+                        else:
+                            print "failed the test on (j,k,p)=({0!s},{1!s},{2!s})".format(j,k,p)
+                    if p_not_found:
+                        return False
+        return True
 
 
 
