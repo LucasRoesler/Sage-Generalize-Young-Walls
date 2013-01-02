@@ -30,6 +30,8 @@ from sage.misc.latex import latex
 from sage.graphs.graph import DiGraph
 from sage.combinat import ranker
 from sage.combinat.root_system.cartan_type import CartanType
+from sage.structure.element import Element, parent
+
 
 class GeneralizedYoungWall:
     '''
@@ -191,9 +193,10 @@ class GeneralizedYoungWall:
         lastminus  = signature[1].rfind('-')
         #print raw_signature
         #print "grabbing from the " + str(lastminus) +'th spot in the raw ' +  str(i) +'-sig'
-        deletionrow = raw_signature[lastminus][1]
+       
         newdata = []
         if lastminus > -1:
+            deletionrow = raw_signature[lastminus][1]
             #newdata = self.data
             #newdata[deletionrow] = newdata[deletionrow][:-1]
             for r in range(self.rows):
@@ -306,13 +309,12 @@ class GeneralizedYoungWall:
         return self.epsilon(i) + self.weight_on_hi(i)
 
     def column(self, k):
-        L = [len(r) for r in self.data]
         C = []
-        for r in range(len(self.data)):
-            if k-1 > len(self.data[r]):
-                C.append(None)
+        for row in self.data:
+            if k-1 < len(row):
+                C.append(row[k-1])
             else:
-                C.append(self.data[r][k-1])
+                C.append(None)
         return C
 
     def a(self,i,k):
@@ -337,7 +339,7 @@ class GeneralizedYoungWall:
 
 
 
-class CrystalOfGeneralizedYoungWalls:
+class CrystalOfGeneralizedYoungWalls(Parent):
     '''
         Constructs the top part of the crystal B(infinity) realized as the set of generalized Young walls in type A_n^{(1)} down to a given depth.
         
