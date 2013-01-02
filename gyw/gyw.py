@@ -325,6 +325,13 @@ class GeneralizedYoungWall:
                 A.append(self.column(k)[c])
         return len(A)
 
+    def in_highest_weight_crystal(self,La):
+        assert La in self.weight_lattice_realization
+    for k in range(len(self.cols)):
+        for j in self.index_set():
+            if self.a(j,k) - self.a(j-1,k) > 0:
+                
+
 
 class CrystalOfGeneralizedYoungWalls:
     '''
