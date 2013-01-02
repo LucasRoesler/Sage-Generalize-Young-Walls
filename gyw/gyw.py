@@ -201,7 +201,9 @@ class GeneralizedYoungWall:
                     newdata.append(list(self.data[r][:-1]))
                 else:
                     newdata.append(list(self.data[r]))
-        return GeneralizedYoungWall(newdata,self.rank)
+            return GeneralizedYoungWall(newdata,self.rank)
+        else:
+            return None
 
     def f(self,i):
         '''
