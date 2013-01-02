@@ -333,7 +333,8 @@ class GeneralizedYoungWall:
         
         for k in range(1,self.cols+1):
             for j in self.index_set():
-                if self.a(j,k) - self.a( (j-1) % n ,k) <= 0:
+                print "({0!s},{1!s})-----".format(j,k)
+                if self.a(j,k) - self.a( (j-1) % (n+1) ,k) <= 0:
                     print "failed T1 on ({0!s},{1!s}) & ({2!s},{1!s}) move along".format(j,k,(j-1) % n)
                     continue
                 else:
