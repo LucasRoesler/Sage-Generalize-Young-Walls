@@ -372,8 +372,8 @@ class CrystalOfGeneralizedYoungWalls(Parent):
         self.rank = n
         self.depth = h
         self.data = [GeneralizedYoungWall([],n)]
-        for level in range(h):
-            for Y in [X for X in self.data if X.content()==level]:
+        for height in range(h):
+            for Y in [X for X in self.data if X.content()==height]:
                 for i in range(n+1):
                     W = Y.f(i)
                     if W in self.data:
