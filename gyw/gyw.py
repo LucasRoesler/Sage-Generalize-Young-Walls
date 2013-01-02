@@ -97,6 +97,7 @@ class GeneralizedYoungWall:
             return self.data != other.data
         else:
             return True
+
     def __cmp__(self,other):
         return cmp(self.data,other.data)
      
@@ -249,7 +250,7 @@ class GeneralizedYoungWall:
         return s
     
     def index_set(self):
-        return range(self.rank+1)
+        return self.cartan_type().index_set()
 
     def cartan_type(self):
         return self._cartan_type
@@ -273,12 +274,7 @@ class GeneralizedYoungWall:
         return self.root_lattice_realization().simple_roots()
 
     def weight(self):
-        #Probably could be defined as sum(iweight(i) for i in range(self.rank+1))?
-        W = []
-        for r in self.data:
-            for i in r:
-                W.append(-1*self.alpha()[i])
-        return sum(w for w in W)
+        return sum(self.iweight(i) for i in self.index_set())
 
     def iweight(self,i):
         W = []
@@ -303,9 +299,9 @@ class GeneralizedYoungWall:
         eps = 0
         while True:
             self = self.e(i)
-            if self is None:
+            if self == 0:
                 break
-                eps = eps+1
+            eps = eps+1
         return eps
 
     def phi(self,i):
@@ -313,13 +309,24 @@ class GeneralizedYoungWall:
 
     def column(self, k):
         L = [len(r) for r in self.data]
-        if k > max(L):
-            return []
-        else:
-            return [self.data[j][k] for j in self.data[r]]
+        C = []
+        for r in range(len(self.data)):
+            if k-1 > len(self.data[r]):
+                C.append(None)
+            else:
+                C.append(self.data[r][k-1])
+        return C
+
+    def a(self,i,k):
+        assert i in self.index_set()
+        A = []
+        for c in range(len(self.column(k))):
+            if self.column(k)[c] == i:
+                A.append(self.column(k)[c])
+        return len(A)
 
 
-class GeneralizedYoungWallCrystal:
+class CrystalOfGeneralizedYoungWalls:
     '''
         Constructs the top part of the crystal B(infinity) realized as the set of generalized Young walls in type A_n^{(1)} down to a given depth.
         
