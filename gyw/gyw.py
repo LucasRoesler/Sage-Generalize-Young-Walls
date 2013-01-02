@@ -335,23 +335,18 @@ class GeneralizedYoungWall:
         ac = self.weight_lattice_realization().simple_coroots()
         n = self.rank
         
-        print "----- testing {0!s}".format(La)
-        
         for k in range(1,self.cols+1):
             for j in self.index_set():
-                print "({0!s},{1!s})-----".format(j,k)
                 if self.a(j,k) - self.a( (j-1) % (n+1) ,k) <= 0:
-                    print "failed T1 on ({0!s},{1!s}) & ({2!s},{1!s}) move along".format(j,k,(j-1) % n)
                     continue
                 else:
                     p_not_found = True
                     for p in self.index_set():
-                        if j+k == (p+1) % (n+1) and self.a(j,k) - self.a(j-1,k) <= La.scalar(ac[p]):
-                            print "passed the test on (j,k,p)=({0!s},{1!s},{2!s})".format(j,k,p)
+                        if (j+k) % (n+1)  == (p+1) % (n+1) and self.a(j,k) - self.a( (j-1) % (n+1) ,k) <= La.scalar(ac[p]):
                             p_not_found = False
                             continue
                         else:
-                            print "failed the test on (j,k,p)=({0!s},{1!s},{2!s})".format(j,k,p)
+                            continue
                     if p_not_found:
                         return False
         return True
