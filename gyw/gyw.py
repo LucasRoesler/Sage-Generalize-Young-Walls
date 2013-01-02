@@ -499,3 +499,20 @@ class CrystalOfGeneralizedYoungWalls(Parent):
     
     def alpha(self):
         return self.root_lattice_realization().simple_roots()
+        
+
+class HighestWeightCrystalOfGYW(CrystalOfGeneralizedYoungWalls):
+    
+    def __init__(self, n, h , La):
+        self.rank = n
+        self.depth = h
+        self._cartan_type = CartanType(['A',self.rank,1])
+        
+        C = CrystalOfGeneralizedYoungWalls(n,h)
+        self.data = []
+        for c in C:
+            if c.in_highest_weight_crystal(La) : 
+                self.data.append(c)
+    
+    def list(self):
+        return self.data
