@@ -311,6 +311,13 @@ class GeneralizedYoungWall:
     def phi(self,i):
         return self.epsilon(i) + self.weight_on_hi(self,i)
 
+    def column(self, k):
+        L = [len(r) for r in self.data]
+        if k > max(L):
+            continue
+        else:
+            return [self.data[j][k] for j in self.data[r]]
+
 
 class GeneralizedYoungWallCrystal:
     '''
