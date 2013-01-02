@@ -318,7 +318,6 @@ class GeneralizedYoungWall:
         return C
 
     def a(self,i,k):
-        assert i in self.index_set()
         A = []
         for c in range(len(self.column(k))):
             if self.column(k)[c] == i:
@@ -328,7 +327,7 @@ class GeneralizedYoungWall:
     def in_highest_weight_crystal(self,La):
         assert La in self.weight_lattice_realization()
         ac = self.weight_lattice_realization().simple_coroots()
-        for k in range(self.cols):
+        for k in range(1,self.cols):
             for j in self.index_set():
                 if self.a(j,k) - self.a(j-1,k) <= 0:
                     return True
