@@ -75,12 +75,12 @@ class GeneralizedYoungWall:
 
     def __init__(self,data,n):
         self.rows = len(data)
-        self.cols = 0
+        if data ==[]:
+            self.cols = 0
+        else:
+            self.cols = max([len(r) for r in data])
         self.rank = n
         self.data = data
-        for r in self.data:
-            if len(r) > self.cols:
-                self.cols = len(r)
         self._cartan_type = CartanType(['A',self.rank,1])
                 
     def __repr__(self):
@@ -201,7 +201,9 @@ class GeneralizedYoungWall:
                     newdata.append(list(self.data[r][:-1]))
                 else:
                     newdata.append(list(self.data[r]))
-        return GeneralizedYoungWall(newdata,self.rank)
+            return GeneralizedYoungWall(newdata,self.rank)
+        else:
+            return None
 
     def f(self,i):
         '''
