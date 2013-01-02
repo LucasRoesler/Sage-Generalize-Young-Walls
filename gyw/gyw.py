@@ -313,13 +313,12 @@ class GeneralizedYoungWall:
         return self.epsilon(i) + self.weight_on_hi(self,i)
 
     def column(self, k):
-        L = [len(r) for r in self.data]
         C = []
-        for r in range(len(self.data)):
-            if k-1 > len(self.data[r]):
-                C.append(None)
+        for row in self.data:
+            if k-1 < len(row):
+                C.append(row[k-1])
             else:
-                C.append(self.data[r][k-1])
+                C.append(None)
         return C
 
     def a(self,i,k):
