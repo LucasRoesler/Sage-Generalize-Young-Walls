@@ -16,8 +16,6 @@
 
 ########## TO DO ################
 #
-# - input rep. theoretic data
-# - weight of a wall
 # - highest weight crystals
 # - redo latex output so that we start with digraph --> dot_tex, plot and plot3d --> latex, latex_file, view
 #
