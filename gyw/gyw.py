@@ -21,6 +21,10 @@
 #
 #
 
+r'''
+    WARNING: At the moment, there is no check that an implemented array satisfies the board placement rules for tiles as in Kim-Shin.  For example, our code does not check that the southestern-most tile is colored 0.
+'''
+
 
 import re
 from copy import deepcopy
@@ -507,12 +511,16 @@ class HighestWeightCrystalOfGYW(CrystalOfGeneralizedYoungWalls):
         self.rank = n
         self.depth = h
         self._cartan_type = CartanType(['A',self.rank,1])
+        self.hw = La
         
         C = CrystalOfGeneralizedYoungWalls(n,h)
         self.data = []
         for c in C:
             if c.in_highest_weight_crystal(La) : 
                 self.data.append(c)
-    
+
+    def __repr__(self):
+        return "Highest weight crystal of generalized Young walls of Cartan type {1!s} and highest weight {0!s} down to depth {2!s}.".format(self.hw, self.cartan_type(), self.depth)
+
     def list(self):
         return self.data
