@@ -15,11 +15,9 @@
 
 
 ########## TO DO ################
-#
 # - highest weight crystals
 # - redo latex output so that we start with digraph --> dot_tex, plot and plot3d --> latex, latex_file, view
-#
-#
+
 
 r'''
     WARNING: At the moment, there is no check that an implemented array satisfies the board placement rules for tiles as in Kim-Shin.  For example, our code does not check that the southestern-most tile is colored 0.
@@ -33,6 +31,8 @@ from sage.graphs.graph import DiGraph
 from sage.combinat import ranker
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.structure.element import Element, parent
+from sage.misc.latex import latex
+from sage.graphs.dot2tex_utils import have_dot2tex
 
 
 class GeneralizedYoungWall:
@@ -305,10 +305,16 @@ class GeneralizedYoungWall:
                 break
             eps = eps+1
         return eps
+    
+    def Epsilon(self):
+        return sum(self.epsilon(i)*self.Lambda()[i] for i in self.index_set())
 
     def phi(self,i):
         h = self.weight_lattice_realization().simple_coroots()
         return self.epsilon(i) + y.weight().scalar(h[i])
+    
+    def Phi(self):
+        return sum(self.phi(i)*self.Lambda()[i] for i in self.index_set())
 
     def column(self, k):
         '''
@@ -434,35 +440,26 @@ class CrystalOfGeneralizedYoungWalls(Parent):
         """
         Returns a Dot2TeX version of self.
         """
-        #rank = ranker.from_list(self.list())[int(0)]
-        #rank = lambda x : self.data.index(x)
-        #vertex_key = lambda x: "N_"+str(rank(x))
         vertex_key = lambda x : "N_"+str(self.data.index(x))
-        
-        # To do: check the regular expression
-        # Removing %-style comments, newlines, quotes
-        # This should probably be moved to sage.misc.latex
         quoted_latex = lambda x: re.sub("\"|\r|(%[^\n]*)?\n","", x.latex_small())
-        
         result = "digraph G { \n  node [ shape=plaintext ];\n"
-        
         for x in self.data:
             result += "  " + vertex_key(x) + " [ label = \" \", texlbl = \"$"+quoted_latex(x)+"$\" ];\n"
         for x in self.data:
-            for i in range(self.rank+1):
+            for i in self.index_set():
                 child = x.f(i)
                 if child in self.data:
                     try:
                         result += "  " + vertex_key(x) + " -> "
                     except KeyError:
                         print x.pp()
-                        print "x caused an error with the ranker function, stopping exectution"
+                        print "x caused an error with the ranker function. Stopping execution."
                         return False
                     try:
                         result += vertex_key(child)
                     except KeyError as error:
                         print child.pp()
-                        print "child caused an error with the ranker function, stopping exectution"
+                        print "child caused an error with the ranker function. Stopping execution."
                         print error
                         return False
                 
@@ -552,4 +549,10 @@ class HighestWeightCrystalOfGYW(CrystalOfGeneralizedYoungWalls):
 
     def list(self):
         return self.data
-
+        
+    def HW_test(self,first_factor):
+        list = []
+        for wall in self.data:
+            if wall.Epsilon() <= self.hw:
+                list.append([wall,first_factor+self.hw+wall.weight()])
+        return list
