@@ -522,10 +522,9 @@ class HighestWeightCrystalOfGYW(CrystalOfGeneralizedYoungWalls):
     def list(self):
         return self.data
 
-    def HW_test(self):
+    def HW_test(self,first_factor):
         list = []
         for wall in self.data:
-            if wall.Epsilon() <= self.hw is True:
-                list.append(y)
+            if wall.Epsilon() <= self.hw:
+                list.append([wall,first_factor+self.hw+wall.weight()])
         return list
-            
