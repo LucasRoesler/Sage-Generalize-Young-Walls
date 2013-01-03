@@ -537,14 +537,13 @@ class CrystalOfGeneralizedYoungWalls(Parent):
 class HighestWeightCrystalOfGYW(CrystalOfGeneralizedYoungWalls):
     
     def __init__(self, n, h , La):
-        self.rank = n
-        self.depth = h
-        self._cartan_type = CartanType(['A',self.rank,1])
+        super(HighestWeightCrystalOfGYW,self).__init__(n,h)
         self.hw = La
         
-        C = CrystalOfGeneralizedYoungWalls(n,h)
+        self.originaldata = self.data
+        
         self.data = []
-        for c in C:
+        for c in self.originaldata:
             if c.in_highest_weight_crystal(La) : 
                 self.data.append(c)
 
@@ -553,3 +552,4 @@ class HighestWeightCrystalOfGYW(CrystalOfGeneralizedYoungWalls):
 
     def list(self):
         return self.data
+
