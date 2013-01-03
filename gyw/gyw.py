@@ -333,24 +333,53 @@ class GeneralizedYoungWall:
         return len(A)
 
     def in_highest_weight_crystal(self,La):
+        '''
+        Returns a boolean indicating if the generalized young wall element
+        is in the highest weight crystal cut out by the given highest weight La.
+        '''
+        # We impliment Theorem 4.1 in Kim and Shin (Proc. AMS, 2010)
+        
+        # check that La is in the weight lattice or throw an exception
         assert La in self.weight_lattice_realization()
+        
+        # grab the coroots and the rank
         ac = self.weight_lattice_realization().simple_coroots()
         n = self.rank
         
+        # for each column in the GYW
         for k in range(1,self.cols+1):
+            # and each color j
             for j in self.index_set():
+                # we check if the number of j boxes is less than or equal
+                # to the number of j-1 boxes, if so there is nothing else to
+                # check.   Note that if j=0, then j-1 = the rank, hence the 
+                # modular arithmetic 
                 if self.a(j,k) - self.a( (j-1) % (n+1) ,k) <= 0:
                     continue
                 else:
+                # if the # of j boxes is greater than the # of j-1 boxes 
+                # then we must find an index p such that
+                # j+k = p + 1 mod (n+1) and at the same time 
+                # we have # j boxes - # j-1 boxes is no bigger than La(h_p)
+                # p_not_found is the state of this test.
                     p_not_found = True
                     for p in self.index_set():
                         if (j+k) % (n+1)  == (p+1) % (n+1) and self.a(j,k) - self.a( (j-1) % (n+1) ,k) <= La.scalar(ac[p]):
+                            # test succeed, switch the test state
                             p_not_found = False
                             continue
                         else:
+                            # p not found yet, we need to make sure that 
+                            # we check all of the p values
                             continue
                     if p_not_found:
+                        # after we have tested each p value,
+                        # if no p is found then we can stop testing any other
+                        # j or k values, this GYW is not in the highest weight
+                        # crystal cut out by La
                         return False
+        # if all of the above tests succeed, then this GYW is in the
+        # highest weight crystal cut out by La
         return True
 
 
