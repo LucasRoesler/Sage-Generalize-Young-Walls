@@ -33,9 +33,9 @@ from sage.graphs.graph import DiGraph
 from sage.combinat import ranker
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.structure.element import Element, parent
+from sage.combinat.combinat import CombinatorialObject
 
-
-class GeneralizedYoungWall:
+class GeneralizedYoungWall(CombinatorialObject):
     '''
         Constructs a generalized Young wall from list input.
         
@@ -86,27 +86,12 @@ class GeneralizedYoungWall:
         self.rank = n
         self.data = data
         self._cartan_type = CartanType(['A',self.rank,1])
+        CombinatorialObject.__init__(self, data)
                 
     def __repr__(self):
         return self.data.__repr__()
         
-    def __eq__(self,other):
-        if type(other) is type(self):
-            return self.data == other.data
-        else:
-            return False
-            
-    def __neq__(self,other):
-        if type(other) is type(self):
-            return self.data != other.data
-        else:
-            return True
 
-    def __cmp__(self,other):
-        return cmp(self.data,other.data)
-     
-    def __hash__(self):
-        return id(self)
 
     def raw_signature(self,i):
         '''
@@ -429,6 +414,34 @@ class CrystalOfGeneralizedYoungWalls(Parent):
     
     def cardinality(self):
         return len(self.data)
+        
+        
+    def digraph(self):
+        from sage.graphs.all import DiGraph
+        d = {}
+        for x in self.data:
+            d[x] = {}
+            for i in self.index_set():
+                child = x.f(i)
+                if child in self.data:
+                    d[x][child]=i
+        G = DiGraph(d)
+        if have_dot2tex():
+            G.set_latex_options(format="dot2tex", edge_labels = True, color_by_label = self.cartan_type()._index_set_coloring,
+                                edge_options = lambda (u,v,label): ({"backward":label ==0}))
+        return G
+    def plot(self, **options):
+        """
+        Returns the plot of self as a directed graph.
+        """
+        return self.digraph().plot(edge_labels=True,vertex_size=0,**options)
+
+    def plot3d(self, **options):
+        """
+        Returns the 3-dimensional plot of self as a directed graph.
+        """
+        G = self.digraph(**options)
+        return G.plot3d()    
     
     def dot_tex(self):
         """
