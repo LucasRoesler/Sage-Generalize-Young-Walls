@@ -481,24 +481,8 @@ class CrystalOfGeneralizedYoungWalls(Parent):
                     result += " [ label = \" \", texlbl = \"%d\" ];\n"%i
         result+="}"
         return result
-    
-    def latex(self):
-        '''
-        Returns a string of LaTeX code of self.  To export directly to a LaTeX file, use self.latex_file('<directory>').
-        '''
-        try:
-            from dot2tex.dot2tex import Dot2TikZConv
-        except ImportError:
-            print "dot2tex not available.  Install after running \'sage -sh\'"
-            return
         
-        options = {'format':'tikz', 'crop':True, 'usepdflatex':True, 'figonly':True}
-        
-        content = (Dot2TikZConv(options)).convert(self.dot_tex())
-        
-        return content
-        
-    def altlatex(self, **options):
+    def latex(self, **options):
             r"""
             Returns the crystal graph as a latex string. This can be exported
             to a file with self.latex_file('filename').
@@ -509,30 +493,6 @@ class CrystalOfGeneralizedYoungWalls(Parent):
             G=self.digraph()
             return G._latex_()
     
-    def altlatex_file(self, filename):
-        '''
-        Outputs a LaTeX file of self to destination filename.
-        '''
-        header = r"""\documentclass{article}
-            \usepackage[x11names, rgb]{xcolor}
-            \usepackage[utf8]{inputenc}
-            \usepackage{tikz}
-            \usetikzlibrary{snakes,arrows,shapes,matrix}
-            \usepackage{amsmath,amssymb}
-            \usepackage[active,tightpage]{preview}
-            \newenvironment{bla}{}{}
-            \PreviewEnvironment{bla}
-            
-            \begin{document}
-            \begin{bla}"""
-        
-        footer = r"""\end{bla}
-            \end{document}"""
-        f = open(filename, 'w+')
-        f.write(header + self.altlatex() + footer)
-        f.close()
-            
-
     def latex_file(self, filename):
         '''
         Outputs a LaTeX file of self to destination filename.
@@ -553,7 +513,7 @@ class CrystalOfGeneralizedYoungWalls(Parent):
         footer = r"""\end{bla}
             \end{document}"""
         f = open(filename, 'w+')
-        f.write(header + self.latex() + footer)
+        f.write(header + self.altlatex() + footer)
         f.close()
 
     def index_set(self):
