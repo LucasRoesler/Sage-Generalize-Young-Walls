@@ -240,6 +240,8 @@ class GeneralizedYoungWall(CombinatorialObject):
             s += "{" + ','.join("{" + ','.join( str(i) for i in r ) + "}" for r in self.data ) + "} \n"
             s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\tiny] at (-\\t,\\s) {$\\y$}; \n \draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \draw[-] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n"
         return s
+        
+    _latex_ = latex_small
     
     def index_set(self):
         return self.cartan_type().index_set()
@@ -433,8 +435,8 @@ class CrystalOfGeneralizedYoungWalls(Parent):
                     d[x][child]=i
         G = DiGraph(d)
         if have_dot2tex():
-            G.set_latex_options(format="dot2tex", edge_labels = True, color_by_label = self.cartan_type()._index_set_coloring,
-                                edge_options = lambda (u,v,label): ({"backward":label ==0}))
+            G.set_latex_options(format="dot2tex", edge_labels = True, 
+                                color_by_label = self.cartan_type()._index_set_coloring)
         return G
     def plot(self, **options):
         """
@@ -495,6 +497,41 @@ class CrystalOfGeneralizedYoungWalls(Parent):
         content = (Dot2TikZConv(options)).convert(self.dot_tex())
         
         return content
+        
+    def altlatex(self, **options):
+            r"""
+            Returns the crystal graph as a latex string. This can be exported
+            to a file with self.latex_file('filename').
+            """
+            if not have_dot2tex():
+                print "dot2tex not available.  Install after running \'sage -sh\'"
+                return
+            G=self.digraph()
+            return G._latex_()
+    
+    def altlatex_file(self, filename):
+        '''
+        Outputs a LaTeX file of self to destination filename.
+        '''
+        header = r"""\documentclass{article}
+            \usepackage[x11names, rgb]{xcolor}
+            \usepackage[utf8]{inputenc}
+            \usepackage{tikz}
+            \usetikzlibrary{snakes,arrows,shapes,matrix}
+            \usepackage{amsmath,amssymb}
+            \usepackage[active,tightpage]{preview}
+            \newenvironment{bla}{}{}
+            \PreviewEnvironment{bla}
+            
+            \begin{document}
+            \begin{bla}"""
+        
+        footer = r"""\end{bla}
+            \end{document}"""
+        f = open(filename, 'w+')
+        f.write(header + self.altlatex() + footer)
+        f.close()
+            
 
     def latex_file(self, filename):
         '''
