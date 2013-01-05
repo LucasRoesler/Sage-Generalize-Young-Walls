@@ -513,7 +513,7 @@ class CrystalOfGeneralizedYoungWalls(Parent):
         footer = r"""\end{bla}
             \end{document}"""
         f = open(filename, 'w+')
-        f.write(header + self.altlatex() + footer)
+        f.write(header + self.latex() + footer)
         f.close()
 
     def index_set(self):
