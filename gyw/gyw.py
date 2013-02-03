@@ -34,8 +34,9 @@ from sage.structure.element import Element, parent
 from sage.misc.latex import latex
 from sage.graphs.dot2tex_utils import have_dot2tex
 from sage.combinat.combinat import CombinatorialObject
+from sage.categories.finite_crystals import FiniteCrystals
 
-class GeneralizedYoungWall(CombinatorialObject):
+class GeneralizedYoungWall(CombinatorialObject,Element):
     '''
         Constructs a generalized Young wall from list input.
         
@@ -48,30 +49,30 @@ class GeneralizedYoungWall(CombinatorialObject):
         
         sage: y = GeneralizeYoungWall([[0,2,1,0,2],[1,0,2],[],[],[1],[],[],[1]],2)
         sage: y.pp()
-        1|
-        |
-        |
-        1|
-        |
-        |
-        2|0|1|
+                1|
+                 |
+                 |
+                1|
+                 |
+                 |
+            2|0|1|
         2|0|1|2|0|
         
         sage: y = GeneralizeYoungWall([[0,5,4,3,2],[],[2,1,0,5,4,3],[3,2],[],[5,4,3,2]],5)
         sage| y.pp()
-        2|3|4|5|
-        |
-        2|3|
+            2|3|4|5|
+                   |
+                2|3|
         3|4|5|0|1|2|
-        |
-        2|3|4|5|0|
+                   |
+          2|3|4|5|0|
         
         sage: y = GeneralizeYoungWall([[0,2,1],[1,0,2],[2],[],[],[2]],2)
         sage: y.pp()
-        2|
-        |
-        |
-        2|
+            2|
+             |
+             |
+            2|
         2|0|1|
         1|2|0|
         1|2|0|
@@ -90,8 +91,6 @@ class GeneralizedYoungWall(CombinatorialObject):
                 
     def __repr__(self):
         return self.data.__repr__()
-        
-
 
     def raw_signature(self,i):
         '''
@@ -221,7 +220,7 @@ class GeneralizedYoungWall(CombinatorialObject):
         '''
         s = ""
         if self.data == []:
-            s += "\\varnothing"
+            s += "\\emptyset"
         else:
             s += "\\begin{tikzpicture}[baseline=20,scale=.45] \n \\foreach \\x [count=\\s from 0] in \n"
             s += "{" + ','.join("{" + ','.join( str(i) for i in r ) + "}" for r in self.data ) + "} \n"
@@ -234,7 +233,7 @@ class GeneralizedYoungWall(CombinatorialObject):
         '''
         s = ""
         if self.data == []:
-                s += "\\varnothing"
+                s += "\\emptyset"
         else:
             s += "\\begin{tikzpicture}[baseline=20,scale=.25] \\foreach \\x [count=\\s from 0] in \n"
             s += "{" + ','.join("{" + ','.join( str(i) for i in r ) + "}" for r in self.data ) + "} \n"
@@ -278,7 +277,7 @@ class GeneralizedYoungWall(CombinatorialObject):
         for r in self.data:
             for i in r:
                 W.append(-1*self.alpha()[i])
-        return sum(w for w in W)
+        return self.root_lattice_realization()(sum(w for w in W))
 
     def epsilon(self, i):
         '''
@@ -298,7 +297,7 @@ class GeneralizedYoungWall(CombinatorialObject):
 
     def phi(self,i):
         h = self.weight_lattice_realization().simple_coroots()
-        return self.epsilon(i) + y.weight().scalar(h[i])
+        return self.epsilon(i) + self.weight().scalar(h[i])
     
     def Phi(self):
         return sum(self.phi(i)*self.Lambda()[i] for i in self.index_set())
@@ -376,7 +375,6 @@ class GeneralizedYoungWall(CombinatorialObject):
         return True
 
 
-
 class CrystalOfGeneralizedYoungWalls(Parent):
     '''
         Constructs the top part of the crystal B(infinity) realized as the set of generalized Young walls in type A_n^{(1)} down to a given depth.
@@ -405,24 +403,24 @@ class CrystalOfGeneralizedYoungWalls(Parent):
                     else:
                         self.data.append(W)
         self._cartan_type = CartanType(['A',self.rank,1])
+        self.module_generators=self
+        Parent.__init__(self, category=FiniteCrystals())
     
+    def __iter__(self):
+        for x in self.data:
+            yield x
+
     def __repr__(self):
         return "Crystal of generalized Young walls of type %s down to depth %d." % (self.cartan_type(), self.depth)
 
     def list(self):
         return self.data
-     
-    def report(self):
-        print "\n-----\n"
-        print ' There are a total of ' + str(len(self.data)) 
-        print ' elements in the crystal, going down to depth ' + str(self.depth) +'.'
     
     def index_set(self):
         print range(self.rank+1)
     
     def cardinality(self):
         return len(self.data)
-        
         
     def digraph(self):
         from sage.graphs.all import DiGraph
@@ -438,6 +436,7 @@ class CrystalOfGeneralizedYoungWalls(Parent):
             G.set_latex_options(format="dot2tex", edge_labels = True, 
                                 color_by_label = self.cartan_type()._index_set_coloring)
         return G
+
     def plot(self, **options):
         """
         Returns the plot of self as a directed graph.
@@ -482,7 +481,7 @@ class CrystalOfGeneralizedYoungWalls(Parent):
         result+="}"
         return result
         
-    def latex(self, **options):
+    def _latex_(self, **options):
             r"""
             Returns the crystal graph as a latex string. This can be exported
             to a file with self.latex_file('filename').
@@ -492,6 +491,7 @@ class CrystalOfGeneralizedYoungWalls(Parent):
                 return
             G=self.digraph()
             return G._latex_()
+    latex = _latex_
     
     def latex_file(self, filename):
         '''
@@ -546,9 +546,7 @@ class HighestWeightCrystalOfGYW(CrystalOfGeneralizedYoungWalls):
     def __init__(self, n, h , La):
         super(HighestWeightCrystalOfGYW,self).__init__(n,h)
         self.hw = La
-        
         self.originaldata = self.data
-        
         self.data = []
         for c in self.originaldata:
             if c.in_highest_weight_crystal(La) : 
